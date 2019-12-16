@@ -29,33 +29,18 @@ import androidx.navigation.fragment.navArgs
 import com.example.android.guesstheword.R
 import com.example.android.guesstheword.databinding.ScoreFragmentBinding
 
-/**
- * Fragment where the final score is shown, after the game is over
- */
 class ScoreFragment : Fragment() {
 
     private lateinit var viewModel: ScoreViewModel
-
     private lateinit var viewModelFactory: ScoreViewModelFactory
 
     override fun onCreateView(
-
             inflater: LayoutInflater,
             container: ViewGroup?,
-
             savedInstanceState: Bundle?
-
     ): View? {
 
-        // Inflate view and obtain an instance of the binding class.
-
-        viewModelFactory = ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(arguments!!).score)
-        viewModel = ViewModelProviders.of(this, viewModelFactory)
-                .get(ScoreViewModel::class.java)
-
         val binding: ScoreFragmentBinding = DataBindingUtil.inflate(
-
-
                 inflater,
                 R.layout.score_fragment,
                 container,
@@ -64,22 +49,16 @@ class ScoreFragment : Fragment() {
         viewModelFactory = ScoreViewModelFactory(ScoreFragmentArgs.fromBundle(arguments!!).score)
         viewModel = ViewModelProviders.of(this, viewModelFactory)
                 .get(ScoreViewModel::class.java)
+        binding.scoreViewModel = viewModel
 
-        // Add observer for score
-        viewModel.score.observe(this, Observer { newScore ->
-            binding.scoreText.text = newScore.toString()
-        })
+        binding.lifecycleOwner = this
 
-        binding.playAgainButton.setOnClickListener { viewModel.onPlayAgain() }
-
-        // Navigates back to game when button is pressed
         viewModel.eventPlayAgain.observe(this, Observer { playAgain ->
             if (playAgain) {
                 findNavController().navigate(ScoreFragmentDirections.actionRestart())
                 viewModel.onPlayAgainComplete()
             }
         })
-
         return binding.root
     }
 }
